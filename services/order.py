@@ -3,7 +3,6 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
 from db.models import Order, Ticket, MovieSession
-from datetime import datetime
 
 
 @transaction.atomic
@@ -18,17 +17,8 @@ def create_order(
         username=username
     )
 
-    order_data = {
-        "user": user
-    }
-    if date is not None:
-        order_data["created_at"] = datetime.strptime(
-            date,
-            "%Y-%m-%d %H:%M"
-        )
-
     order = Order.objects.create(
-        **order_data
+        user=user
     )
 
     tickets_to_create = []
