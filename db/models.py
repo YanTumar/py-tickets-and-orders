@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.db.models import UniqueConstraint
 from django.conf import settings
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -67,16 +68,15 @@ class MovieSession(models.Model):
 
 class Order(models.Model):
     created_at = models.DateTimeField(
-        auto_now_add=True
+        default=timezone.now
     )
     user = models.ForeignKey(
-        to=settings.AUTH_USER_MODEL, on_delete=models.
-        CASCADE, related_name="orders"
+        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="orders"
     )
 
     def __str__(self) -> str:
-        time_str = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
-        return f"<Order: {time_str}>"
+        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
     class Meta:
         ordering = ["-created_at"]
@@ -98,8 +98,8 @@ class Ticket(models.Model):
                          strftime("%Y-%m-%d %H:%M:%S"))
 
         return (
-            f"<Ticket: {movie_title} {show_time_str} "
-            f"(row: {self.row}, seat: {self.seat})>"
+            f"{movie_title} {show_time_str} "
+            f"(row: {self.row}, seat: {self.seat})"
         )
 
     def clean(self) -> None:
